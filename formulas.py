@@ -1,5 +1,7 @@
 import sympy as sym
 import math
+import numpy as np
+from scipy.optimize import fsolve
 
 r_esfera = 2
 a_cubo = 2
@@ -57,42 +59,43 @@ def get_h(figura, material, fluido):
 
 
 def h_esfera(peso, densidad, flota):
-    #ARREGLAR ESTO PARA QUE CALCULE, NO SÉ QUE LIBRERIA USAR
-    pass
+    
+    car = lambda h: peso/densidad*3/np.pi-h**2*(3*np.sqrt(r_esfera*2*h-h**2)-h)
+    rcar = fsolve(car, 0.001)
+    return rcar[0]
+
+
+    #REVISIÓN SI LA SOLUCIÓN ES MAYOR O MENOR AL RADIO SI FLOTA
+    # if h_s1 >= 0:
+    #     if flota:
+    #         if h_s1 <= r_esfera:
+    #             h_esfera = h_s1
+    #     else:
+    #         if h_s1 > r_esfera:
+    #             h_esfera = h_s1
+    # elif h_s2 >= 0:
+    #     if flota:
+    #         if h_s2 <= r_esfera:
+    #             h_esfera = h_s2
+    #     else:
+    #         if h_s2 > r_esfera:
+    #             h_esfera = h_s2 
+
 
     #sym.init_printing()
     #h = sym.symbols('h')
-    #print('peso: ', peso, 'densidad: ',densidad, 'pi: ', math.pi, 'raiz 2:', sym.sqrt(2), 'r_Esf: ', r_esfera)
-    #print('cte :', peso/densidad*3/math.pi)
     #h_ep = sym.solveset(sym.Eq(peso/densidad*3/math.pi, h**2*(3*sym.sqrt(r_esfera*2*h-h**2)-h)),h)
 
-    #print(h_ep)
-    # sym.init_printing()
-    # h,r = sym.symbols('h,r')
-    # eq_1 = sym.Eq(peso/densidad*3/math.pi, h**2*(3*r-h))
-    # eq_2 = sym.Eq (sym.sqrt(r_esfera*2*h-h**2),r)
-    # h_ec, r_ec = sym.solve([eq_1, eq_2],(h,r))
-    # return h_ec
+    
 
 def h_prisma(peso, densidad, flota):
-    sym.init_printing()
-    h = sym.symbols('h')
-    h_p1, h_p2 = sym.solveset(sym.Eq(peso/(densidad*l_prisma), (h*b_prisma/a_prisma)*h),h)
-    if h_p1 >= 0:
-        if flota:
-            if h_p1 <= a_prisma:
-                h_prisma = h_p1
-        else:
-            if h_p1 > a_prisma:
-                h_prisma = h_p1
-    elif h_p2 >= 0:
-        if flota:
-            if h_p2 <= a_prisma:
-                h_prisma = h_p2
-        else:
-            if h_p2 > a_prisma:
-                h_prisma = h_p2    
-    return(h_prisma)
+    #sym.init_printing()
+    #h = sym.symbols('h')
+    #h_p1, h_p2 = sym.solveset(sym.Eq(peso/(densidad*l_prisma), (h*b_prisma/a_prisma)*h),h)
+    car = lambda h: peso/(densidad*l_prisma)- (h*b_prisma/a_prisma)*h
+    rcar = fsolve(car, 0.001)
+    return (rcar[0])
+    
 
 h_ec = get_h(figura, material, fluido)
 print(h_ec)
